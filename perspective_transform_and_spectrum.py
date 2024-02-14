@@ -16,6 +16,15 @@ import scipy.ndimage
 import math
 import matplotlib.ticker as ticker
 
+
+
+#MATPLOTLIB INTERACTIVE MODE TURNED OFF (FOR PLOTS)#
+
+plt.ioff()
+
+####################################################
+
+
 def gaus(x,a,x0,sigma,bkg):
     return a*np.exp(-(x-x0)**2/(2*sigma**2)) + bkg
 
@@ -52,8 +61,8 @@ else:
     print('No background subtraction.')
 
 
-plt.imshow(img)
-plt.show()
+#plt.imshow(img)
+#plt.show()
 
 # # Convert to RGB so as to display via matplotlib
 # # Using Matplotlib we can easily find the coordinates
@@ -74,7 +83,6 @@ pt_D = [892, 131]
 
 
 
-# Here, I have used L2 norm. You can use L1 also.
 width_AD = np.sqrt(((pt_A[0] - pt_D[0]) ** 2) + ((pt_A[1] - pt_D[1]) ** 2))
 width_BC = np.sqrt(((pt_B[0] - pt_C[0]) ** 2) + ((pt_B[1] - pt_C[1]) ** 2))
 maxWidth = max(int(width_AD), int(width_BC))
@@ -100,7 +108,7 @@ plt.imshow(out)
 #out = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
 
 plt.savefig('%sperspective_fixed_%s'%(path,file),bbox_inches='tight', dpi=2000)
-
+plt.close()
 lanex_size_x_mm = 290
 
 
@@ -261,18 +269,19 @@ print(new_x[len(new_x)-1])
 #print(new_x)
 #print(profile) 
 #new=new/prof_thick
-fig, ax = plt.subplots(1, 2)
+fig, ax = plt.subplots(1,2)
 ax[0].set_title('Image')
 ax[0].imshow(out)
 ax[0].plot([prof_pt_a[1],prof_pt_b[1]], [prof_pt_a[0],prof_pt_b[0]], 'r')
 ax[0].plot([prof_pt_b[1],prof_pt_c[1]], [prof_pt_b[0],prof_pt_c[0]], 'r')
 ax[0].plot([prof_pt_c[1],prof_pt_d[1]], [prof_pt_c[0],prof_pt_d[0]], 'r')
 ax[0].plot([prof_pt_d[1],prof_pt_a[1]], [prof_pt_d[0],prof_pt_a[0]], 'r')
+
 ax[1].set_title('Profile')
 ax[1].plot(new_x,new)
 #ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: ('%g') % (72.59335631/(x**0.93984962))))
 
-plt.show()
+
 
 fig, ax=plt.subplots()
 ax.plot(plot_energy,new)
@@ -285,8 +294,8 @@ ax.set_xlim(0,2500)
 plt.savefig('%sSpectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 plt.show()
 
-print(new_x)
-print(plot_energy)
+#print(new_x)
+#print(plot_energy)
 
 
 
