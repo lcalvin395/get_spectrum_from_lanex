@@ -35,8 +35,8 @@ def gaus(x,a,x0,sigma,bkg):
 ############################
 
 
-path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03_(5_shots_after_2cm_shots)/'
-file='Espec_#0027_000001.tif'
+path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
+file='Espec_#0011_000001.tif'
 bckgrnd_file='Espec_#0001_000001.tif'
 
 # Load the background image
@@ -253,7 +253,7 @@ new_x=new_x*pixel_cm_ratio
 
 plot_energy=np.zeros(len(new))
 
-plot_energy=72.59335631/(new_x**0.93984962)
+plot_energy=70.823*(new_x**(-0.945)) #energy to distance off beam axis at screen calculated in excel file and fit found
 
 plot_energy = np.round(plot_energy)
 '''plot_energy[:]=plot_energy[::-1]'''
@@ -283,6 +283,45 @@ ax[1].plot(new_x,new)
 
 
 
+
+
+
+
+############ Calculating charge of the spectrum ##################
+
+
+pi=3.14159265359 #
+pgos=7.44 #g/cm^3 scintillator is composed of amixture of phosphor powder (Gd2O2S:Tb)
+hs=33*(10**-3) # phosphor surface loading
+epsdEbydx=180 # yield of kinetic energy of an electron which is transformed into visible light into the scintillator expressed in unit of pure gadolinium oxysul-fide (GOS) thickness
+sigx=hs/pgos*math.cos(pi/4) #s the equivalent thickness of pure GOS crossed by an electron
+Eph=2.27*(10**-6) #MeV the energy of one photon emitted at 546 nm.
+dNcrbydNel=(1/Eph)*epsdEbydx*sigx # The number of photons Ncr created in the scintillator at the central wavelength per incident electron
+
+ζ=0.22
+
+gthetaCCD=math.cos(pi/4)/pi
+print(gthetaCCD)
+sigomega=1*(10**-4)
+qlens=0.95
+qIf=0.05
+qIf2=0.96
+qIR=0.85
+qfibre=0.37
+
+dNcollbydNcr=ζ*gthetaCCD*sigomega*qlens*qIf*qIf2*qfibre*qIR
+
+QE=0.58
+r=0.46
+
+dNctsbydNcoll=QE/r
+
+pixelsize=6.5*(10**-3)
+print(new[500])
+new[:]=new[:]/(pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))
+print(new[500])
+##########################################################
+
 fig, ax=plt.subplots()
 ax.plot(plot_energy,new)
 #plt.xticks(new_x, plot_energy)
@@ -290,13 +329,13 @@ ax.plot(plot_energy,new)
 ax.set_xlim(0,2500)
 #ax.set_xticklabels(plot_energy.astype(int))
 
-
+print('total electrons:',sum(new))
+print('total charge:',sum(new)*(1.6*(10**-19)))
 plt.savefig('%sSpectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 plt.show()
 
 #print(new_x)
 #print(plot_energy)
-
 
 
 
