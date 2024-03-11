@@ -330,7 +330,7 @@ ax.set_xlim(0,2500)
 #ax.set_xticklabels(plot_energy.astype(int))
 
 print('total electrons:',sum(new))
-print('total charge:',sum(new)*(1.6*(10**-19)))
+print('total charge:',round((sum(new)*(1.6*(10**-19)*10**9)),3),'nC')
 plt.savefig('%sSpectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 plt.show()
 
