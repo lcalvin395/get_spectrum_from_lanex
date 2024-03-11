@@ -36,7 +36,7 @@ def gaus(x,a,x0,sigma,bkg):
 
 
 path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
-file='Espec_#0011_000001.tif'
+file='Espec_#0010_000001.tif'
 bckgrnd_file='Espec_#0001_000001.tif'
 
 # Load the background image
@@ -222,11 +222,12 @@ for E in range(150000,250000000,1175):
 
 ###### these points are in [rows,colunms] ######
 
+centre=ndimage.maximum_position(out) #position of max pixel
 
-prof_pt_a=[0,161]
-prof_pt_b=[1460,161]
-prof_pt_c=[1460,231]
-prof_pt_d=[0,231]
+prof_pt_a=[0,centre[1]-35]
+prof_pt_b=[1460,centre[1]-35]
+prof_pt_c=[1460,centre[1]+35]
+prof_pt_d=[0,centre[1]+35]
 
 
 prof_thick=np.sqrt(((prof_pt_d[1]-prof_pt_a[1])**2)+((prof_pt_d[0]-prof_pt_a[0])**2))
@@ -331,6 +332,9 @@ ax.set_xlim(0,2500)
 
 print('total electrons:',sum(new))
 print('total charge:',round((sum(new)*(1.6*(10**-19)*10**9)),3),'nC')
+
+
+
 plt.savefig('%sSpectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 plt.show()
 
