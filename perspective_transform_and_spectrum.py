@@ -35,12 +35,13 @@ def gaus(x,a,x0,sigma,bkg):
 ############################
 
 
-path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
-file='Espec_#0010_000001.tif'
-bckgrnd_file='Espec_#0001_000001.tif'
+path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/'
+file='Espec_#0027_000001.tif'
+bckgrnd_file='Espec_#0002_000001.tif'
 
 # Load the background image
-bckimg = ski.io.imread('%s%s'%(path,bckgrnd_file)) 
+#bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/',bckgrnd_file)) 
+bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_01/',bckgrnd_file)) 
 #print(bckimg)
 # Load the image
 img = ski.io.imread('%s%s'%(path,file)) 
@@ -221,8 +222,16 @@ for E in range(150000,250000000,1175):
 
 
 ###### these points are in [rows,colunms] ######
+out = ndimage.median_filter(out,5)
 
 centre=ndimage.maximum_position(out) #position of max pixel
+centre=list(centre)
+if centre[1]>390:
+    centre[1]=390
+
+if centre[1]<35:
+    centre[1]=35
+
 
 prof_pt_a=[0,centre[1]-35]
 prof_pt_b=[1460,centre[1]-35]
@@ -270,7 +279,7 @@ print(new_x[len(new_x)-1])
 #print(new_x)
 #print(profile) 
 #new=new/prof_thick
-fig, ax = plt.subplots(1,2)
+'''fig, ax = plt.subplots(1,2)
 ax[0].set_title('Image')
 ax[0].imshow(out)
 ax[0].plot([prof_pt_a[1],prof_pt_b[1]], [prof_pt_a[0],prof_pt_b[0]], 'r')
@@ -279,7 +288,7 @@ ax[0].plot([prof_pt_c[1],prof_pt_d[1]], [prof_pt_c[0],prof_pt_d[0]], 'r')
 ax[0].plot([prof_pt_d[1],prof_pt_a[1]], [prof_pt_d[0],prof_pt_a[0]], 'r')
 
 ax[1].set_title('Profile')
-ax[1].plot(new_x,new)
+ax[1].plot(new_x,new)'''
 #ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: ('%g') % (72.59335631/(x**0.93984962))))
 
 
