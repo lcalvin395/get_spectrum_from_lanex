@@ -29,7 +29,7 @@ def gaus(x,a,x0,sigma,bkg):
     return a*np.exp(-(x-x0)**2/(2*sigma**2)) + bkg
 
 
-
+totcharge=[]
 ### reference image file ###
 #file='reference_no_filters_30ms.tif'
 ############################
@@ -39,9 +39,12 @@ path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/'
 file='Espec_#0027_000001.tif'
 bckgrnd_file='Espec_#0002_000001.tif'
 
-fig, ax=plt.subplots()
-
-for z in range(27,28):
+#fig, ax=plt.subplots(1,2)
+numberofplots=5
+plotnumber=0
+for z in range(27,32):
+    if z<10:
+        z='0%g'%(z)
     file='Espec_#00%s_000001.tif'%(str(z))
     # Load the background image
     #bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/',bckgrnd_file)) 
@@ -110,11 +113,11 @@ for z in range(27,28):
     out = cv2.warpPerspective(img,M,(maxWidth, maxHeight),flags=cv2.INTER_LINEAR)
     #img = out
 
-    plt.imshow(out)
+    #plt.imshow(out)
     #out = cv2.cvtColor(out, cv2.COLOR_BGR2GRAY)
 
-    plt.savefig('%sperspective_fixed_%s'%(path,file),bbox_inches='tight', dpi=2000)
-    plt.close()
+    #plt.savefig('%sperspective_fixed_%s'%(path,file),bbox_inches='tight', dpi=2000)
+    #plt.close()
     lanex_size_x_mm = 290
 
 
@@ -252,21 +255,21 @@ for z in range(27,28):
         profile.append(out[:,l])
     #profile = out[:,196]
     #profile=img_copy[:,950]
-
-    new=np.zeros(len(profile[0]))
-
+    if plotnumber==0:
+        new=np.zeros((numberofplots,len(profile[0])))
+    print(new)
     #print(profile[0])
     #print(new)
     for i in range(0,int(prof_thick)):
-        new=new+profile[i]
+        new[plotnumber]=new[plotnumber]+profile[i]
         #print(new)
 
-    new_x=np.arange(0,len(new))
+    new_x=np.arange(0,len(new[plotnumber]))
     new_x=new_x*pixel_cm_ratio
 
     '''new[:] = new[::-1]'''
 
-    plot_energy=np.zeros(len(new))
+    plot_energy=np.zeros(len(new[plotnumber]))
 
     plot_energy=70.823*(new_x**(-0.945)) #energy to distance off beam axis at screen calculated in excel file and fit found
 
@@ -332,25 +335,34 @@ for z in range(27,28):
     dNctsbydNcoll=QE/r
 
     pixelsize=6.5*(10**-3)
-    print(new[500])
-    new[:]=new[:]/(pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))
-    print(new[500])
+    print(new[plotnumber][500])
+    new[plotnumber][:]=new[plotnumber][:]/(pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))
+    print(new[plotnumber][500])
     ##########################################################
-
-    #fig, ax=plt.subplots()
-    ax.plot(plot_energy,new)
-    #plt.xticks(new_x, plot_energy)
-    #plt.locator_params(axis='x',tight=True, nbins=11)
-    ax.set_xlim(0,2500)
+    
     #ax.set_xticklabels(plot_energy.astype(int))
 
-    print('total electrons:',sum(new))
-    print('total charge:',round((sum(new)*(1.6*(10**-19)*10**9)),3),'nC')
+    print('total electrons:',sum(new[plotnumber]))
+    print('total charge:',round((sum(new[plotnumber])*(1.6*(10**-19)*10**9)),3),'nC')
+    totcharge.append(round((sum(new[plotnumber])*(1.6*(10**-19)*10**9)),3))
 
-
-
+    plotnumber=plotnumber+1
     #plt.savefig('%sSpectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
-    plt.show()
+
+meancharge=np.mean(totcharge)
+
+print(totcharge)
+fig, ax=plt.subplots()
+for i in range(0,len(new)):
+    ax.plot(plot_energy,new[i]*(1.6*(10**-19)*10**9),'c')
+#plt.xticks(new_x, plot_energy)
+#plt.locator_params(axis='x',tight=True, nbins=11)
+plt.xlabel("Energy (MeV)")
+plt.ylabel('Charge (nC)')
+ax.text(x=1500, y=0.02, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
+ax.set_xlim(0,2500)
+plt.savefig('%srun_3_shots_27_to_31(20mm wedge electrons)'%(path),bbox_inches='tight', dpi=1000)
+plt.show()
 
     #print(new_x)
     #print(plot_energy)
