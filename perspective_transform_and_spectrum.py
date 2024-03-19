@@ -35,13 +35,13 @@ def gaus(x,a,x0,sigma,bkg):
 ############################
 
 
-path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/'
-file='Espec_#0027_000001.tif'
-bckgrnd_file='Espec_#0002_000001.tif'
+path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
+file='Espec_#0011_000001.tif'
+bckgrnd_file='Espec_#0003_000001.tif'
 
 # Load the background image
 #bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/',bckgrnd_file)) 
-bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_01/',bckgrnd_file)) 
+bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_01/',bckgrnd_file)) 
 #print(bckimg)
 # Load the image
 img = ski.io.imread('%s%s'%(path,file)) 
