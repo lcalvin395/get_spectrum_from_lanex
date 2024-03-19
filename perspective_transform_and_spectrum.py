@@ -279,7 +279,7 @@ print(new_x[len(new_x)-1])
 #print(new_x)
 #print(profile) 
 #new=new/prof_thick
-'''fig, ax = plt.subplots(1,2)
+fig, ax = plt.subplots(1,2)
 ax[0].set_title('Image')
 ax[0].imshow(out)
 ax[0].plot([prof_pt_a[1],prof_pt_b[1]], [prof_pt_a[0],prof_pt_b[0]], 'r')
@@ -288,7 +288,7 @@ ax[0].plot([prof_pt_c[1],prof_pt_d[1]], [prof_pt_c[0],prof_pt_d[0]], 'r')
 ax[0].plot([prof_pt_d[1],prof_pt_a[1]], [prof_pt_d[0],prof_pt_a[0]], 'r')
 
 ax[1].set_title('Profile')
-ax[1].plot(new_x,new)'''
+ax[1].plot(new_x,new)
 #ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: ('%g') % (72.59335631/(x**0.93984962))))
 
 
