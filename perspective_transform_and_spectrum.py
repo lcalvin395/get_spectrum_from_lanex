@@ -353,6 +353,6 @@ plt.show()
 
 f = open('energy_histo_exp.txt','w')
 for i in range(len(new)):
-    f.write(plot_energy(i),plot_energy(i)/1000,new(i))
+    f.write(plot_energy[i],plot_energy[i]/1000,new[i])
 f.close()
 
