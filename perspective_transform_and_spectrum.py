@@ -35,20 +35,20 @@ totcharge=[]
 ############################
 
 
-path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/'
+path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
 file='Espec_#0027_000001.tif'
-bckgrnd_file='Espec_#0002_000001.tif'
+bckgrnd_file='Espec_#0003_000001.tif'
 
 #fig, ax=plt.subplots(1,2)
 numberofplots=5
 plotnumber=0
-for z in range(27,32):
+for z in range(7,12):
     if z<10:
         z='0%g'%(z)
     file='Espec_#00%s_000001.tif'%(str(z))
     # Load the background image
     #bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/',bckgrnd_file)) 
-    bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_01/',bckgrnd_file)) 
+    bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_01/',bckgrnd_file)) 
     #print(bckimg)
     # Load the image
     img = ski.io.imread('%s%s'%(path,file)) 
@@ -359,9 +359,9 @@ for i in range(0,len(new)):
 #plt.locator_params(axis='x',tight=True, nbins=11)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('Charge (nC)')
-ax.text(x=1500, y=0.02, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
+ax.text(x=500, y=0.04, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
 ax.set_xlim(0,2500)
-plt.savefig('%srun_3_shots_27_to_31(20mm wedge electrons)'%(path),bbox_inches='tight', dpi=1000)
+plt.savefig('%srun_7_shots_7_to_11(20mm wedge electrons)'%(path),bbox_inches='tight', dpi=1000)
 plt.show()
 
     #print(new_x)
