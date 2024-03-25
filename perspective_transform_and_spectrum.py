@@ -325,6 +325,9 @@ ax[0].plot([bckprof_pt_d[1],bckprof_pt_a[1]], [bckprof_pt_d[0],bckprof_pt_a[0]],
 
 ax[1].set_title('Profile')
 ax[1].plot(new_x,new)
+fig = plt.gcf()
+fig.set_size_inches(10,5)
+plt.savefig('%sEspec_image_with_linout%s'%(path,file),bbox_inches='tight', dpi=1000)
 #ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: ('%g') % (72.59335631/(x**0.93984962))))
 
 
@@ -373,6 +376,9 @@ ax.plot(plot_energy,new*(1.6*(10**-19)*10**9),'c')
 #plt.xticks(new_x, plot_energy)
 #plt.locator_params(axis='x',tight=True, nbins=11)
 ax.set_xlim(0,2500)
+plt.xlabel("Energy (MeV)")
+plt.ylabel('Charge (nC)')
+ax.text(x=500, y=0.04, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
 #ax.set_xticklabels(plot_energy.astype(int))
 
 print('total electrons:',sum(new))
@@ -394,16 +400,21 @@ f.close()
 
 binnedenergy=[]
 binnedcounts=[]
-for i in range(0,2500,10):
+for i in range(0,2500,50):
     bintotal=0
     binnedenergy.append(i)
     for g in range(0,len(plot_energy)):
-        if plot_energy[g]<i and plot_energy[g]>(i-10):
-            bintotal=bintotal+new[g]
+        if plot_energy[g]<i and plot_energy[g]>(i-50):
+            bintotal=bintotal+new[g]*(1.6*(10**-19)*10**9)
     binnedcounts.append(bintotal)
 
 fig, ax=plt.subplots()
 width=binnedenergy[1]-binnedenergy[0]
 #ax.bar(binnedenergy,binnedcounts, align='center',width=width)
-ax.plot(binnedenergy,binnedcounts)
+ax.plot(binnedenergy,binnedcounts,'c')
+plt.xlabel("Energy (MeV)")
+plt.ylabel('Charge (nC)')
+ax.text(x=1500, y=0.2, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
+plt.savefig('%sREBINNED_Spectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
+
 plt.show()
