@@ -36,7 +36,7 @@ def gaus(x,a,x0,sigma,bkg):
 
 
 path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
-file='Espec_#0010_000001.tif'
+file='Espec_#0011_000001.tif'
 bckgrnd_file='Espec_#0003_000001.tif'
 
 # Load the background image
@@ -393,10 +393,7 @@ plt.show()
 #print(plot_energy)
 
 print(plot_energy[len(plot_energy)-3])
-f = open('%senergy_histo_exp.txt'%(path),'w')
-for i in range(len(new)-1,0,-1):
-    f.write('%g %g %g\n'%(plot_energy[i],plot_energy[i]/1000,new[i]))
-f.close()
+
 
 binnedenergy=[]
 binnedcounts=[]
@@ -418,3 +415,8 @@ plt.ylabel('Charge (nC)')
 plt.savefig('%sREBINNED_Spectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 
 plt.show()
+
+f = open('%senergy_histo_exp.txt'%(path),'w')
+for i in range(len(binnedcounts)-1,0,-1):
+    f.write('%g %g %g\n'%(binnedenergy[i],binnedenergy[i]/1000,binnedcounts[i]))
+f.close()
