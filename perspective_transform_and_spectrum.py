@@ -232,6 +232,30 @@ if centre[1]>390:
 if centre[1]<35:
     centre[1]=35
 
+################################
+    
+if centre[1]>150:
+    bckcentre=35
+if centre[1]<150:
+    bckcentre=355
+bckprof_pt_a=[0,bckcentre-35]            #THIS SECTION IS GETTING THE BACKGROUND COUNTS
+bckprof_pt_b=[1460,bckcentre-35]
+bckprof_pt_c=[1460,bckcentre+35]
+bckprof_pt_d=[0,bckcentre+35]
+
+bckprof_thick=np.sqrt(((bckprof_pt_d[1]-bckprof_pt_a[1])**2)+((bckprof_pt_d[0]-bckprof_pt_a[0])**2))
+
+bckprofile=[]
+for l in range(bckprof_pt_a[1],bckprof_pt_d[1]):
+    bckprofile.append(out[:,l])
+
+bcknew=np.zeros(len(bckprofile[0]))
+for i in range(0,int(bckprof_thick)):
+    bcknew=bcknew+bckprofile[i]
+
+################################
+
+
 
 prof_pt_a=[0,centre[1]-35]
 prof_pt_b=[1460,centre[1]-35]
@@ -265,7 +289,7 @@ plot_energy=np.zeros(len(new))
 
 plot_energy=70.823*(new_x**(-0.945)) #energy to distance off beam axis at screen calculated in excel file and fit found
 
-plot_energy = np.round(plot_energy)
+#plot_energy = np.round(plot_energy)
 '''plot_energy[:]=plot_energy[::-1]'''
 '''for m in range(0,len(new_x)):
     if m==1460:
@@ -274,6 +298,14 @@ plot_energy = np.round(plot_energy)
     print(plot_energy[m])'''
 
 print(new_x[len(new_x)-1])
+
+
+for i in range(0,len(new)):
+    if bcknew[i]<=new[i]:
+        new[i]=new[i]-bcknew[i]
+    else: 
+        new[i]=0
+
 
 
 #print(new_x)
@@ -286,6 +318,10 @@ ax[0].plot([prof_pt_a[1],prof_pt_b[1]], [prof_pt_a[0],prof_pt_b[0]], 'r')
 ax[0].plot([prof_pt_b[1],prof_pt_c[1]], [prof_pt_b[0],prof_pt_c[0]], 'r')
 ax[0].plot([prof_pt_c[1],prof_pt_d[1]], [prof_pt_c[0],prof_pt_d[0]], 'r')
 ax[0].plot([prof_pt_d[1],prof_pt_a[1]], [prof_pt_d[0],prof_pt_a[0]], 'r')
+ax[0].plot([bckprof_pt_a[1],bckprof_pt_b[1]], [bckprof_pt_a[0],bckprof_pt_b[0]], 'y', linestyle='dashed')
+ax[0].plot([bckprof_pt_b[1],bckprof_pt_c[1]], [bckprof_pt_b[0],bckprof_pt_c[0]], 'y', linestyle='dashed')
+ax[0].plot([bckprof_pt_c[1],bckprof_pt_d[1]], [bckprof_pt_c[0],bckprof_pt_d[0]], 'y', linestyle='dashed')
+ax[0].plot([bckprof_pt_d[1],bckprof_pt_a[1]], [bckprof_pt_d[0],bckprof_pt_a[0]], 'y', linestyle='dashed')
 
 ax[1].set_title('Profile')
 ax[1].plot(new_x,new)
@@ -333,7 +369,7 @@ print(new[500])
 ##########################################################
 
 fig, ax=plt.subplots()
-ax.plot(plot_energy,new)
+ax.plot(plot_energy,new,'cyan')
 #plt.xticks(new_x, plot_energy)
 #plt.locator_params(axis='x',tight=True, nbins=11)
 ax.set_xlim(0,2500)
@@ -350,9 +386,24 @@ plt.show()
 #print(new_x)
 #print(plot_energy)
 
-
-f = open('energy_histo_exp.txt','w')
-for i in range(len(new)):
-    f.write(plot_energy[i],plot_energy[i]/1000,new[i])
+print(plot_energy[len(plot_energy)-3])
+f = open('%senergy_histo_exp.txt'%(path),'w')
+for i in range(len(new)-1,0,-1):
+    f.write('%g %g %g\n'%(plot_energy[i],plot_energy[i]/1000,new[i]))
 f.close()
 
+binnedenergy=[]
+binnedcounts=[]
+for i in range(0,2500,10):
+    bintotal=0
+    binnedenergy.append(i)
+    for g in range(0,len(plot_energy)):
+        if plot_energy[g]<i and plot_energy[g]>(i-10):
+            bintotal=bintotal+new[g]
+    binnedcounts.append(bintotal)
+
+fig, ax=plt.subplots()
+width=binnedenergy[1]-binnedenergy[0]
+#ax.bar(binnedenergy,binnedcounts, align='center',width=width)
+ax.plot(binnedenergy,binnedcounts)
+plt.show()
