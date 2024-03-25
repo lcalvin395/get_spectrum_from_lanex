@@ -369,7 +369,7 @@ print(new[500])
 ##########################################################
 
 fig, ax=plt.subplots()
-ax.plot(plot_energy,new,'cyan')
+ax.plot(plot_energy,new*(1.6*(10**-19)*10**9),'c')
 #plt.xticks(new_x, plot_energy)
 #plt.locator_params(axis='x',tight=True, nbins=11)
 ax.set_xlim(0,2500)
