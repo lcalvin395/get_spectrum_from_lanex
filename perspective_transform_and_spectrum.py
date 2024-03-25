@@ -354,19 +354,32 @@ meancharge=np.mean(totcharge)
 print(totcharge)
 fig, ax=plt.subplots()
 for i in range(0,len(new)):
-    ax.plot(plot_energy,new[i]*(1.6*(10**-19)*10**9),'c')
+    #ax.plot(plot_energy,new[i]*(1.6*(10**-19)*10**9),'c')
+    binnedenergy=[]
+    binnedcounts=[]
+    for j in range(0,2500,50):
+        bintotal=0
+        binnedenergy.append(j)
+        for g in range(0,len(plot_energy)):
+            if plot_energy[g]<j and plot_energy[g]>(j-50):
+                bintotal=bintotal+new[i][g]*(1.6*(10**-19)*10**9)
+        binnedcounts.append(bintotal)
+
+    width=binnedenergy[1]-binnedenergy[0]
+    #ax.bar(binnedenergy,binnedcounts, align='center',width=width)
+    ax.plot(binnedenergy,binnedcounts,'c')
+
 #plt.xticks(new_x, plot_energy)
 #plt.locator_params(axis='x',tight=True, nbins=11)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('Charge (nC)')
-ax.text(x=500, y=0.04, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
+ax.text(x=1500, y=0.2, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
 ax.set_xlim(0,2500)
-plt.savefig('%srun_7_shots_7_to_11(20mm wedge electrons)'%(path),bbox_inches='tight', dpi=1000)
+plt.savefig('%sREBBINED_run_7_shots_7_to_11(20mm wedge electrons)'%(path),bbox_inches='tight', dpi=1000)
 plt.show()
 
     #print(new_x)
     #print(plot_energy)
-
 
 
 
