@@ -240,6 +240,28 @@ for z in range(7,12):
     if centre[1]<35:
         centre[1]=35
 
+    ################################
+        
+    if centre[1]>150:
+        bckcentre=35
+    if centre[1]<150:
+        bckcentre=355
+    bckprof_pt_a=[0,bckcentre-35]            #THIS SECTION IS GETTING THE BACKGROUND COUNTS
+    bckprof_pt_b=[1460,bckcentre-35]
+    bckprof_pt_c=[1460,bckcentre+35]
+    bckprof_pt_d=[0,bckcentre+35]
+
+    bckprof_thick=np.sqrt(((bckprof_pt_d[1]-bckprof_pt_a[1])**2)+((bckprof_pt_d[0]-bckprof_pt_a[0])**2))
+
+    bckprofile=[]
+    for l in range(bckprof_pt_a[1],bckprof_pt_d[1]):
+        bckprofile.append(out[:,l])
+
+    bcknew=np.zeros(len(bckprofile[0]))
+    for i in range(0,int(bckprof_thick)):
+        bcknew=bcknew+bckprofile[i]
+
+    ################################
 
     prof_pt_a=[0,centre[1]-35]
     prof_pt_b=[1460,centre[1]-35]
