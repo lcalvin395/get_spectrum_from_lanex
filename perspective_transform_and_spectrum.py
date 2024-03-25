@@ -305,6 +305,11 @@ for z in range(7,12):
 
     print(new_x[len(new_x)-1])
 
+    for i in range(0,len(new[plotnumber])):
+        if bcknew[i]<=new[plotnumber][i]:
+            new[plotnumber][i]=new[plotnumber][i]-bcknew[i]
+        else: 
+            new[plotnumber][i]=0
 
     #print(new_x)
     #print(profile) 
