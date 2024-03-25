@@ -36,7 +36,7 @@ def gaus(x,a,x0,sigma,bkg):
 
 
 path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
-file='Espec_#0011_000001.tif'
+file='Espec_#0010_000001.tif'
 bckgrnd_file='Espec_#0003_000001.tif'
 
 # Load the background image
@@ -378,7 +378,7 @@ ax.plot(plot_energy,new*(1.6*(10**-19)*10**9),'c')
 ax.set_xlim(0,2500)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('Charge (nC)')
-ax.text(x=500, y=0.04, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
+#ax.text(x=500, y=0.04, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
 #ax.set_xticklabels(plot_energy.astype(int))
 
 print('total electrons:',sum(new))
@@ -414,7 +414,7 @@ width=binnedenergy[1]-binnedenergy[0]
 ax.plot(binnedenergy,binnedcounts,'c')
 plt.xlabel("Energy (MeV)")
 plt.ylabel('Charge (nC)')
-ax.text(x=1500, y=0.2, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
+#ax.text(x=1500, y=0.2, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
 plt.savefig('%sREBINNED_Spectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 
 plt.show()
