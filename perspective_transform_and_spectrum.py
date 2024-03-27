@@ -43,8 +43,8 @@ bckgrnd_file='Espec_#0003_000001.tif'
 numberofplots=5
 plotnumber=0
 for z in range(7,12):
-    if z==9:
-        continue
+    #if z==9:
+    #    continue
     if z<10:
         z='0%g'%(z)
     file='Espec_#00%s_000001.tif'%(str(z))
