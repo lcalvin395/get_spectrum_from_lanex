@@ -36,7 +36,7 @@ def gaus(x,a,x0,sigma,bkg):
 
 
 path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
-file='Espec_#0011_000001.tif'
+file='Espec_#0010_000001.tif'
 bckgrnd_file='Espec_#0003_000001.tif'
 
 # Load the background image
@@ -50,7 +50,8 @@ img = ski.io.imread('%s%s'%(path,file))
 #print(bckimg[423][822]) 
 # Create a copy of the image
 img_copy = np.copy(img)
-bckgrnd_subtrct=input("Perform background subtraction?\ny/n:")
+#bckgrnd_subtrct=input("Perform background subtraction?\ny/n:")
+bckgrnd_subtrct='y'
 if bckgrnd_subtrct=='y':
     for w in range(len(img)):
         for q in range(len(img[1])):
@@ -372,12 +373,12 @@ print(new[500])
 ##########################################################
 
 fig, ax=plt.subplots()
-ax.plot(plot_energy,new*(1.6*(10**-19)*10**9),'c')
+ax.plot(plot_energy,new*(1.6*(10**-19)*10**12),'c')
 #plt.xticks(new_x, plot_energy)
 #plt.locator_params(axis='x',tight=True, nbins=11)
 ax.set_xlim(0,2500)
 plt.xlabel("Energy (MeV)")
-plt.ylabel('Charge (nC)')
+plt.ylabel('Charge (pC)')
 #ax.text(x=500, y=0.04, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
 #ax.set_xticklabels(plot_energy.astype(int))
 
@@ -397,26 +398,28 @@ print(plot_energy[len(plot_energy)-3])
 
 binnedenergy=[]
 binnedcounts=[]
-for i in range(0,2500,50):
+binwidth=50
+for i in range(0,2500,binwidth):
     bintotal=0
     binnedenergy.append(i)
     for g in range(0,len(plot_energy)):
-        if plot_energy[g]<i and plot_energy[g]>(i-50):
-            bintotal=bintotal+new[g]*(1.6*(10**-19)*10**9)
-    binnedcounts.append(bintotal)
+        if plot_energy[g]<i and plot_energy[g]>(i-binwidth):
+            bintotal=bintotal+new[g]*(1.6*(10**-19)*10**12)
+    binnedcounts.append(bintotal/binwidth)
 
 fig, ax=plt.subplots()
 width=binnedenergy[1]-binnedenergy[0]
 #ax.bar(binnedenergy,binnedcounts, align='center',width=width)
+
 ax.plot(binnedenergy,binnedcounts,'c')
 plt.xlabel("Energy (MeV)")
-plt.ylabel('Charge (nC)')
-#ax.text(x=1500, y=0.2, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
+plt.ylabel('dN/dE (pC/MeV)')
+ax.text(x=1500, y=5, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
 plt.savefig('%sREBINNED_Spectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 
 plt.show()
 
-f = open('%senergy_histo_exp.txt'%(path),'w')
-for i in range(len(binnedcounts)-1,0,-1):
-    f.write('%g %g %g\n'%(binnedenergy[i],binnedenergy[i]/1000,binnedcounts[i]))
+f = open('%senergy_histo_exp.csv'%(path),'w')
+for i in range(0,len(binnedcounts)):
+    f.write('%g,%g,%g\n'%(binnedenergy[i],binnedenergy[i]/1000,binnedcounts[i]))
 f.close()
