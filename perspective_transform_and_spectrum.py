@@ -43,6 +43,8 @@ bckgrnd_file='Espec_#0003_000001.tif'
 numberofplots=5
 plotnumber=0
 for z in range(7,12):
+    if z==9:
+        continue
     if z<10:
         z='0%g'%(z)
     file='Espec_#00%s_000001.tif'%(str(z))
@@ -380,17 +382,19 @@ meancharge=np.mean(totcharge)
 
 print(totcharge)
 fig, ax=plt.subplots()
+binwidth=50
 for i in range(0,len(new)):
+    
     #ax.plot(plot_energy,new[i]*(1.6*(10**-19)*10**9),'c')
     binnedenergy=[]
     binnedcounts=[]
-    for j in range(0,2500,50):
+    for j in range(0,2500,binwidth):
         bintotal=0
         binnedenergy.append(j)
         for g in range(0,len(plot_energy)):
-            if plot_energy[g]<j and plot_energy[g]>(j-50):
-                bintotal=bintotal+new[i][g]*(1.6*(10**-19)*10**9)
-        binnedcounts.append(bintotal)
+            if plot_energy[g]<j and plot_energy[g]>(j-binwidth):
+                bintotal=bintotal+new[i][g]*(1.6*(10**-19)*10**12)
+        binnedcounts.append(bintotal/binwidth)
 
     width=binnedenergy[1]-binnedenergy[0]
     #ax.bar(binnedenergy,binnedcounts, align='center',width=width)
@@ -399,8 +403,8 @@ for i in range(0,len(new)):
 #plt.xticks(new_x, plot_energy)
 #plt.locator_params(axis='x',tight=True, nbins=11)
 plt.xlabel("Energy (MeV)")
-plt.ylabel('Charge (nC)')
-ax.text(x=1500, y=0.2, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
+plt.ylabel('dN/dE (pC/MeV)')
+ax.text(x=1500, y=6, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
 ax.set_xlim(0,2500)
 plt.savefig('%sREBBINED_run_7_shots_7_to_11(20mm wedge electrons)'%(path),bbox_inches='tight', dpi=1000)
 plt.show()
