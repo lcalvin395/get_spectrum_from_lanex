@@ -36,7 +36,7 @@ def gaus(x,a,x0,sigma,bkg):
 
 
 path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
-file='Espec_#0010_000001.tif'
+file='Espec_#0011_000001.tif'
 bckgrnd_file='Espec_#0003_000001.tif'
 
 # Load the background image
@@ -274,6 +274,7 @@ for l in range(prof_pt_a[1],prof_pt_d[1]):
 #profile=img_copy[:,950]
 
 new=np.zeros(len(profile[0]))
+newerr=np.zeros(len(profile[0]))
 
 #print(profile[0])
 #print(new)
@@ -343,37 +344,60 @@ plt.savefig('%sEspec_image_with_linout%s'%(path,file),bbox_inches='tight', dpi=1
 pi=3.14159265359 #
 pgos=7.44 #g/cm^3 scintillator is composed of amixture of phosphor powder (Gd2O2S:Tb)
 hs=33*(10**-3) # phosphor surface loading
+
 epsdEbydx=180 # yield of kinetic energy of an electron which is transformed into visible light into the scintillator expressed in unit of pure gadolinium oxysul-fide (GOS) thickness
+epserr=20 #error
+
 sigx=hs/pgos*math.cos(pi/4) #s the equivalent thickness of pure GOS crossed by an electron
 Eph=2.27*(10**-6) #MeV the energy of one photon emitted at 546 nm.
+
 dNcrbydNel=(1/Eph)*epsdEbydx*sigx # The number of photons Ncr created in the scintillator at the central wavelength per incident electron
+crbyelerr=(1/Eph)*epserr*sigx #error
 
 ζ=0.22
 
 gthetaCCD=math.cos(pi/4)/pi
 print(gthetaCCD)
-sigomega=1*(10**-4)
+
+sigomega=1*(10**-4)     #65cm from lens to espec
+sigomegaerr=np.sqrt(2*(0.005/0.65)/0.65**2)*sigomega
+
 qlens=0.95
-qIf=0.05
-qIf2=0.96
-qIR=0.85
+
+qIf=0.85   #FGB37
+
+qIf2=0.41    #FGV9
+
+
+qIR=0.98  #FBH550-40
+
 qfibre=0.37
+qfibreerr=0.02
 
 dNcollbydNcr=ζ*gthetaCCD*sigomega*qlens*qIf*qIf2*qfibre*qIR
+collbycrerr=np.sqrt(((qfibreerr/qfibre)**2)+((sigomegaerr/sigomega)**2))*dNcollbydNcr
 
-QE=0.58
-r=0.46
+
+QE=0.58  #quantum efficiency
+r=0.46         # number of electrons needed for 1 count
 
 dNctsbydNcoll=QE/r
 
 pixelsize=6.5*(10**-3)
 print(new[500])
 new[:]=new[:]/(pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))
+interr=np.sqrt(((collbycrerr/dNcollbydNcr)**2)+((crbyelerr/dNcrbydNel)**2))*dNcollbydNcr*dNcrbydNel*dNctsbydNcoll*pixelsize
+newerr[:]=(interr/pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))*new[:]
+
 print(new[500])
+print('ERROR: ',newerr[500])
 ##########################################################
 
 fig, ax=plt.subplots()
 ax.plot(plot_energy,new*(1.6*(10**-19)*10**12),'c')
+(_, caps, _) = plt.errorbar(plot_energy, new*(1.6*(10**-19)*10**12), yerr=newerr*(1.6*(10**-19)*10**12), fmt='o',color='black', markersize=1, capsize=5)
+for cap in caps:
+    cap.set_markeredgewidth(1)
 #plt.xticks(new_x, plot_energy)
 #plt.locator_params(axis='x',tight=True, nbins=11)
 ax.set_xlim(0,2500)
@@ -398,20 +422,29 @@ print(plot_energy[len(plot_energy)-3])
 
 binnedenergy=[]
 binnedcounts=[]
+binnederr=[]
 binwidth=50
 for i in range(0,2500,binwidth):
     bintotal=0
+    binerrtotal=0
     binnedenergy.append(i)
     for g in range(0,len(plot_energy)):
         if plot_energy[g]<i and plot_energy[g]>(i-binwidth):
             bintotal=bintotal+new[g]*(1.6*(10**-19)*10**12)
+            binerrtotal=np.sqrt((binerrtotal**2)+(newerr[g]**2))
+
+    
     binnedcounts.append(bintotal/binwidth)
+    binnederr.append(binerrtotal/binwidth)
 
 fig, ax=plt.subplots()
 width=binnedenergy[1]-binnedenergy[0]
 #ax.bar(binnedenergy,binnedcounts, align='center',width=width)
 
 ax.plot(binnedenergy,binnedcounts,'c')
+'''(_, caps, _) = plt.errorbar(binnedenergy,binnedcounts, yerr=binnederr, fmt='o',color='black', markersize=1, capsize=5)
+for cap in caps:
+    cap.set_markeredgewidth(1)'''
 plt.xlabel("Energy (MeV)")
 plt.ylabel('dN/dE (pC/MeV)')
 ax.text(x=1500, y=5, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
