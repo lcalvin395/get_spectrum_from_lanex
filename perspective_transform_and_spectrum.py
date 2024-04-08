@@ -359,14 +359,14 @@ crbyelerr=(1/Eph)*epserr*sigx #error
 gthetaCCD=math.cos(pi/4)/pi
 print(gthetaCCD)
 
-sigomega=1*(10**-4)     #65cm from lens to espec
+sigomega=((6.5*10**-3)**2)/0.7**2  #70cm from lens to espec
 sigomegaerr=np.sqrt(2*(0.005/0.65)/0.65**2)*sigomega
 
-qlens=0.95
+qlens=0.95**4      #objective at front and back of           fibre bundle
 
 qIf=0.85   #FGB37
 
-qIf2=0.41    #FGV9
+qIf2=0.41    #FGV9S
 
 
 qIR=0.98  #FBH550-40
@@ -431,7 +431,7 @@ for i in range(0,2500,binwidth):
     for g in range(0,len(plot_energy)):
         if plot_energy[g]<i and plot_energy[g]>(i-binwidth):
             bintotal=bintotal+new[g]*(1.6*(10**-19)*10**12)
-            binerrtotal=np.sqrt((binerrtotal**2)+(newerr[g]**2))
+            binerrtotal=np.sqrt((binerrtotal**2)+((newerr[g]*(1.6*(10**-19)*10**12))**2))
 
     
     binnedcounts.append(bintotal/binwidth)
@@ -442,12 +442,12 @@ width=binnedenergy[1]-binnedenergy[0]
 #ax.bar(binnedenergy,binnedcounts, align='center',width=width)
 
 ax.plot(binnedenergy,binnedcounts,'c')
-'''(_, caps, _) = plt.errorbar(binnedenergy,binnedcounts, yerr=binnederr, fmt='o',color='black', markersize=1, capsize=5)
+(_, caps, _) = plt.errorbar(binnedenergy,binnedcounts, yerr=binnederr, fmt='o',color='black', markersize=1, capsize=5)
 for cap in caps:
-    cap.set_markeredgewidth(1)'''
+    cap.set_markeredgewidth(1)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('dN/dE (pC/MeV)')
-ax.text(x=1500, y=5, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
+#ax.text(x=1500, y=5, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
 plt.savefig('%sREBINNED_Spectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 
 plt.show()
