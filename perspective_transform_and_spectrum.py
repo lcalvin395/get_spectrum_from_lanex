@@ -43,8 +43,8 @@ bckgrnd_file='Espec_#0003_000001.tif'
 numberofplots=5
 plotnumber=0
 for z in range(7,12):
-    #if z==9:
-    #    continue
+    if z==9:
+        continue
     if z<10:
         z='0%g'%(z)
     file='Espec_#00%s_000001.tif'%(str(z))
@@ -281,6 +281,7 @@ for z in range(7,12):
     #profile=img_copy[:,950]
     if plotnumber==0:
         new=np.zeros((numberofplots,len(profile[0])))
+        newerr=np.zeros(len(profile[0]))
     print(new)
     #print(profile[0])
     #print(new)
@@ -341,23 +342,28 @@ for z in range(7,12):
     pgos=7.44 #g/cm^3 scintillator is composed of amixture of phosphor powder (Gd2O2S:Tb)
     hs=33*(10**-3) # phosphor surface loading
     epsdEbydx=180 # yield of kinetic energy of an electron which is transformed into visible light into the scintillator expressed in unit of pure gadolinium oxysul-fide (GOS) thickness
+    epserr=20 #error
     sigx=hs/pgos*math.cos(pi/4) #s the equivalent thickness of pure GOS crossed by an electron
     Eph=2.27*(10**-6) #MeV the energy of one photon emitted at 546 nm.
     dNcrbydNel=(1/Eph)*epsdEbydx*sigx # The number of photons Ncr created in the scintillator at the central wavelength per incident electron
-
+    crbyelerr=(1/Eph)*epserr*sigx #error
     ζ=0.22
 
     gthetaCCD=math.cos(pi/4)/pi
     print(gthetaCCD)
-    sigomega=1*(10**-4)
-    qlens=0.95
-    qIf=0.05
-    qIf2=0.96
-    qIR=0.85
+    
+    sigomega=((6.5*10**-3)**2)/0.7**2  #70cm from lens to espec
+    sigomegaerr=np.sqrt(2*(0.005/0.65)/0.65**2)*sigomega
+
+    qlens=0.95**4
+    qIf=0.85
+    qIf2=0.41
+    qIR=0.98
     qfibre=0.37
+    qfibreerr=0.02
 
     dNcollbydNcr=ζ*gthetaCCD*sigomega*qlens*qIf*qIf2*qfibre*qIR
-
+    collbycrerr=np.sqrt(((qfibreerr/qfibre)**2)+((sigomegaerr/sigomega)**2))*dNcollbydNcr
     QE=0.58
     r=0.46
 
@@ -365,7 +371,11 @@ for z in range(7,12):
 
     pixelsize=6.5*(10**-3)
     print(new[plotnumber][500])
+
+    
     new[plotnumber][:]=new[plotnumber][:]/(pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))
+    interr=np.sqrt(((collbycrerr/dNcollbydNcr)**2)+((crbyelerr/dNcrbydNel)**2))*dNcollbydNcr*dNcrbydNel*dNctsbydNcoll*pixelsize
+    #newerr[:]=(interr/pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))*new[:]
     print(new[plotnumber][500])
     ##########################################################
     
@@ -404,7 +414,7 @@ for i in range(0,len(new)):
 #plt.locator_params(axis='x',tight=True, nbins=11)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('dN/dE (pC/MeV)')
-ax.text(x=1500, y=6, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
+#ax.text(x=1500, y=6, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
 ax.set_xlim(0,2500)
 plt.savefig('%sREBBINED_run_7_shots_7_to_11(20mm wedge electrons)'%(path),bbox_inches='tight', dpi=1000)
 plt.show()
