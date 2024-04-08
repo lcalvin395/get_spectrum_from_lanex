@@ -447,7 +447,7 @@ for cap in caps:
     cap.set_markeredgewidth(1)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('dN/dE (pC/MeV)')
-#ax.text(x=1500, y=5, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
+ax.text(x=1500, y=0.6, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
 plt.savefig('%sREBINNED_Spectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 
 plt.show()
