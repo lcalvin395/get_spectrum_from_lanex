@@ -43,8 +43,8 @@ bckgrnd_file='Espec_#0003_000001.tif'
 numberofplots=5
 plotnumber=0
 for z in range(7,12):
-    if z==9:
-        continue
+    #if z==9:
+    #    continue
     if z<10:
         z='0%g'%(z)
     file='Espec_#00%s_000001.tif'%(str(z))
@@ -416,7 +416,7 @@ plt.xlabel("Energy (MeV)")
 plt.ylabel('dN/dE (pC/MeV)')
 #ax.text(x=1500, y=6, s='Mean Charge: %gnC'%(meancharge), color='#334f8d')
 ax.set_xlim(0,2500)
-plt.savefig('%sREBBINED_run_7_shots_7_to_11(20mm wedge electrons)'%(path),bbox_inches='tight', dpi=1000)
+plt.savefig('%sREBBINED_run_7_shots_7_to_11(20mm wedge electrons)-including shot 9'%(path),bbox_inches='tight', dpi=1000)
 plt.show()
 
     #print(new_x)
