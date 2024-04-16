@@ -35,13 +35,13 @@ def gaus(x,a,x0,sigma,bkg):
 ############################
 
 
-path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
-file='Espec_#0011_000001.tif'
-bckgrnd_file='Espec_#0003_000001.tif'
+path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/'
+file='Espec_#0052_000001.tif'
+bckgrnd_file='Espec_#0001_000001.tif'
 
 # Load the background image
 #bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/',bckgrnd_file)) 
-bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_01/',bckgrnd_file)) 
+bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/',bckgrnd_file)) 
 #print(bckimg)
 # Load the image
 img = ski.io.imread('%s%s'%(path,file)) 
@@ -270,6 +270,38 @@ prof_thick=np.sqrt(((prof_pt_d[1]-prof_pt_a[1])**2)+((prof_pt_d[0]-prof_pt_a[0])
 profile=[]
 for l in range(prof_pt_a[1],prof_pt_d[1]):
     profile.append(out[:,l])
+
+FWHM=[]
+for j in range(0,100):
+    dispprofile=out[centre[0]+j,:]
+    #fig, ax = plt.subplots()
+    #ax.set_ylim(0,3000)
+    #ax.plot(dispprofile)
+    #plt.savefig('%sdispprofile%g%s'%(path,j,file),bbox_inches='tight', dpi=1000)
+    maxdisp=max(dispprofile)
+    map(int,dispprofile)
+    #print(maxdisp)
+    done=0
+    for i in range(0,len(dispprofile)):
+        if (maxdisp/2<=dispprofile[i] and done==0):
+            #print(centre)
+            #print(i)
+            #print(dispprofile[i-1])
+            if (((maxdisp/2)-dispprofile[i])**2 < ((maxdisp/2)-dispprofile[i-1])**2):
+                halfpoint=(i)
+            else:
+                halfpoint=(i-1)
+            done=1
+        if maxdisp==dispprofile[i]:
+            maxdisppos=i
+    HWHM=maxdisppos-halfpoint
+
+    FWHM.append(HWHM*2)
+    #print('FWHM:',FWHM)
+finalFWHM=np.mean(FWHM)
+print("FINAL FWHM: ", finalFWHM)
+
+
 #profile = out[:,196]
 #profile=img_copy[:,950]
 
@@ -288,8 +320,27 @@ new_x=new_x*pixel_cm_ratio
 '''new[:] = new[::-1]'''
 
 plot_energy=np.zeros(len(new))
+plot_energy_err=[]
 
 plot_energy=70.823*(new_x**(-0.945)) #energy to distance off beam axis at screen calculated in excel file and fit found
+for i in range(0,len(plot_energy)):
+    plot_energy_err.append(((70.823*(new_x[i]**(-0.945))) - (70.823*((new_x[i]+(finalFWHM*pixel_cm_ratio))**(-0.945)))))
+    if plot_energy[i]>=2500:
+        plot_energy_err[i]=0
+print(plot_energy[100])
+print(plot_energy[101])
+print((70.823*((new_x[100])**(-0.945))))
+ 
+'''indextocut=np.arange(energycutoff,len(plot_energy)-1)
+plot_energy=np.delete(plot_energy,indextocut)
+new=np.delete(new,indextocut)
+new_x=np.delete(new_x,indextocut)
+newerr=np.delete(newerr,indextocut)
+plot_energy_err=np.delete(plot_energy_err,indextocut)'''
+
+
+
+print(finalFWHM*pixel_cm_ratio)
 
 #plot_energy = np.round(plot_energy)
 '''plot_energy[:]=plot_energy[::-1]'''
@@ -384,20 +435,27 @@ r=0.46         # number of electrons needed for 1 count
 dNctsbydNcoll=QE/r
 
 pixelsize=6.5*(10**-3)
-print(new[500])
+#print(new[500])
 new[:]=new[:]/(pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))
 interr=np.sqrt(((collbycrerr/dNcollbydNcr)**2)+((crbyelerr/dNcrbydNel)**2))*dNcollbydNcr*dNcrbydNel*dNctsbydNcoll*pixelsize
 newerr[:]=(interr/pixelsize*(dNctsbydNcoll*dNcollbydNcr*dNcrbydNel))*new[:]
 
-print(new[500])
-print('ERROR: ',newerr[500])
+#print(new[500])
+#print('ERROR: ',newerr[500])
 ##########################################################
+minusplot=[]
+plusplot=[]
+for u in range(0,len(plot_energy)):
+    minusplot.append(plot_energy[u]-plot_energy_err[u])
+    plusplot.append(plot_energy[u]+plot_energy_err[u])
 
 fig, ax=plt.subplots()
 ax.plot(plot_energy,new*(1.6*(10**-19)*10**12),'c')
-(_, caps, _) = plt.errorbar(plot_energy, new*(1.6*(10**-19)*10**12), yerr=newerr*(1.6*(10**-19)*10**12), fmt='o',color='black', markersize=1, capsize=5)
-for cap in caps:
-    cap.set_markeredgewidth(1)
+ax.plot(minusplot,new*(1.6*(10**-19)*10**12),'c',alpha=0.3)
+ax.plot(plusplot,new*(1.6*(10**-19)*10**12),'c',alpha=0.3)
+#(_, caps, _) = plt.errorbar(plot_energy, new*(1.6*(10**-19)*10**12), xerr=plot_energy_err, fmt='o',color='black', markersize=1, capsize=5)
+#for cap in caps:
+#    cap.set_markeredgewidth(1)
 #plt.xticks(new_x, plot_energy)
 #plt.locator_params(axis='x',tight=True, nbins=11)
 ax.set_xlim(0,2500)
@@ -419,7 +477,8 @@ plt.show()
 
 print(plot_energy[len(plot_energy)-3])
 
-
+negbinnedcounts=[]
+posbinnedcounts=[]
 binnedenergy=[]
 binnedcounts=[]
 binnederr=[]
@@ -431,20 +490,28 @@ for i in range(0,2500,binwidth):
     for g in range(0,len(plot_energy)):
         if plot_energy[g]<i and plot_energy[g]>(i-binwidth):
             bintotal=bintotal+new[g]*(1.6*(10**-19)*10**12)
-            binerrtotal=np.sqrt((binerrtotal**2)+((newerr[g]*(1.6*(10**-19)*10**12))**2))
+            binerrtotal=np.sqrt((binerrtotal**2)+((plot_energy_err[g])**2))
 
     
     binnedcounts.append(bintotal/binwidth)
-    binnederr.append(binerrtotal/binwidth)
-
+    binnederr.append(binerrtotal)
 fig, ax=plt.subplots()
 width=binnedenergy[1]-binnedenergy[0]
 #ax.bar(binnedenergy,binnedcounts, align='center',width=width)
+print('HEREREREWREWR: ',len(binnedenergy), len(binnederr))
+for p in range(0,len(binnedenergy)):
+    print(p)
+    negbinnedcounts.append(binnedenergy[p]-binnederr[p])
+    posbinnedcounts.append(binnedenergy[p]+binnederr[p])
 
 ax.plot(binnedenergy,binnedcounts,'c')
-(_, caps, _) = plt.errorbar(binnedenergy,binnedcounts, yerr=binnederr, fmt='o',color='black', markersize=1, capsize=5)
-for cap in caps:
-    cap.set_markeredgewidth(1)
+ax.plot(negbinnedcounts,binnedcounts, 'c', alpha=0.3)
+ax.plot(posbinnedcounts,binnedcounts,'c', alpha=0.3)
+#plt.fill_betweenx(binnedcounts, negbinnedcounts, posbinnedcounts)
+
+#(_, caps, _) = plt.errorbar(binnedenergy,binnedcounts, xerr=binnederr, fmt='o',color='black', markersize=1, capsize=5)
+#for cap in caps:
+#    cap.set_markeredgewidth(1)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('dN/dE (pC/MeV)')
 ax.text(x=1500, y=0.6, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
