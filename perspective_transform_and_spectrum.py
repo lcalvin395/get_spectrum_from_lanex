@@ -36,21 +36,21 @@ totcharge=[]
 
 
 path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
-file='Espec_#0027_000001.tif'
+file='Espec_#0011_000001.tif'
 bckgrnd_file='Espec_#0003_000001.tif'
 
 #fig, ax=plt.subplots(1,2)
 numberofplots=5
 plotnumber=0
-for z in range(7,12):
+for z in range(11,12):
     #if z==9:
     #    continue
     if z<10:
         z='0%g'%(z)
     file='Espec_#00%s_000001.tif'%(str(z))
     # Load the background image
-    #bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/',bckgrnd_file)) 
-    bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_01/',bckgrnd_file)) 
+    bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/',bckgrnd_file)) 
+    #bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/',bckgrnd_file)) 
     #print(bckimg)
     # Load the image
     img = ski.io.imread('%s%s'%(path,file)) 
