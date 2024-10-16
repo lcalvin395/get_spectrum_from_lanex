@@ -35,13 +35,13 @@ def gaus(x,a,x0,sigma,bkg):
 ############################
 
 
-path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/'
-file='Espec_#0052_000001.tif'
-bckgrnd_file='Espec_#0001_000001.tif'
+path='/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/'
+file='Espec_#0011_000001.tif'
+bckgrnd_file='Espec_#0003_000001.tif'
 
 # Load the background image
-#bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_07/',bckgrnd_file)) 
-bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/',bckgrnd_file)) 
+bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231124/run_01/',bckgrnd_file)) 
+#bckimg = ski.io.imread('%s%s'%('/Users/lukecalvin/2023/ELI-NP DATA/espec/20231128/run_03/',bckgrnd_file)) 
 #print(bckimg)
 # Load the image
 img = ski.io.imread('%s%s'%(path,file)) 
@@ -505,8 +505,10 @@ for p in range(0,len(binnedenergy)):
     posbinnedcounts.append(binnedenergy[p]+binnederr[p])
 
 ax.plot(binnedenergy,binnedcounts,'c')
-ax.plot(negbinnedcounts,binnedcounts, 'c', alpha=0.3)
-ax.plot(posbinnedcounts,binnedcounts,'c', alpha=0.3)
+
+
+
+
 #plt.fill_betweenx(binnedcounts, negbinnedcounts, posbinnedcounts)
 
 #(_, caps, _) = plt.errorbar(binnedenergy,binnedcounts, xerr=binnederr, fmt='o',color='black', markersize=1, capsize=5)
@@ -514,9 +516,18 @@ ax.plot(posbinnedcounts,binnedcounts,'c', alpha=0.3)
 #    cap.set_markeredgewidth(1)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('dN/dE (pC/MeV)')
-ax.text(x=1500, y=0.6, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
+#ax.text(x=1500, y=0.6, s='Mean Charge: %gnC'%(round((sum(new)*(1.6*(10**-19)*10**9)),3)), color='#334f8d')
 plt.savefig('%sREBINNED_Spectrum_%s'%(path,file),bbox_inches='tight', dpi=1000)
 
+plt.show()
+
+
+fig, ax=plt.subplots()
+ax.plot(binnedenergy,binnederr,'c')
+plt.xlabel("Energy (MeV)")
+plt.ylabel('Error in Energy (MeV)')
+
+plt.savefig('%serror_in_energy_vs_energy%s'%(path,file),bbox_inches='tight', dpi=1000)
 plt.show()
 
 f = open('%senergy_histo_exp.csv'%(path),'w')
