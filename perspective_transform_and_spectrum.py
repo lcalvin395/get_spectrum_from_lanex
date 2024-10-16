@@ -523,7 +523,8 @@ plt.show()
 
 
 fig, ax=plt.subplots()
-ax.plot(binnedenergy,binnederr,'c')
+
+ax.plot(binnedenergy,binnederr,'o',)
 plt.xlabel("Energy (MeV)")
 plt.ylabel('Error in Energy (MeV)')
 
